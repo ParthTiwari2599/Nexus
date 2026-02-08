@@ -8,6 +8,7 @@ import {
 
 export default function LandingPage() {
   const router = useRouter();
+  const hasClerk = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
   return (
     <div className="min-h-screen w-full bg-stone-100 text-stone-900 font-sans selection:bg-orange-200 selection:text-orange-900">
@@ -21,18 +22,24 @@ export default function LandingPage() {
           </div>
           
           <div className="flex items-center gap-8">
-            <SignedIn>
-              <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-white rounded-full border border-stone-200 shadow-sm">
-                <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-                <span className="text-[10px] font-bold text-stone-600 uppercase tracking-widest">Agent Linked</span>
-              </div>
-              <button onClick={() => router.push("/dashboard")} className="text-xs font-bold hover:text-orange-600 transition-colors uppercase tracking-widest">Console</button>
-            </SignedIn>
-            <SignedOut>
-              <SignInButton mode="modal">
-                <button className="text-xs font-bold hover:text-orange-600 transition-colors uppercase tracking-widest">Sign In</button>
-              </SignInButton>
-            </SignedOut>
+            {hasClerk ? (
+              <>
+                <SignedIn>
+                  <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-white rounded-full border border-stone-200 shadow-sm">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+                    <span className="text-[10px] font-bold text-stone-600 uppercase tracking-widest">Agent Linked</span>
+                  </div>
+                  <button onClick={() => router.push("/dashboard")} className="text-xs font-bold hover:text-orange-600 transition-colors uppercase tracking-widest">Console</button>
+                </SignedIn>
+                <SignedOut>
+                  <SignInButton mode="modal">
+                    <button className="text-xs font-bold hover:text-orange-600 transition-colors uppercase tracking-widest">Sign In</button>
+                  </SignInButton>
+                </SignedOut>
+              </>
+            ) : (
+              <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Auth Disabled</span>
+            )}
           </div>
         </div>
       </nav>
@@ -53,18 +60,26 @@ export default function LandingPage() {
               interface designed for developers and power users.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <SignedOut>
-                <SignInButton mode="modal">
-                  <button className="px-10 py-5 bg-orange-600 text-white font-bold rounded-2xl hover:bg-orange-700 transition-all hover:scale-105 shadow-2xl shadow-orange-600/30 flex items-center gap-3 group uppercase text-xs tracking-widest">
-                    Initialize Session <ChevronRight className="group-hover:translate-x-1 transition-transform" size={16} />
-                  </button>
-                </SignInButton>
-              </SignedOut>
-              <SignedIn>
-                <button onClick={() => router.push("/dashboard")} className="px-10 py-5 bg-stone-900 text-white font-bold rounded-2xl hover:bg-black transition-all hover:scale-105 shadow-2xl shadow-stone-900/20 uppercase text-xs tracking-widest">
-                  Enter Master Console
+              {hasClerk ? (
+                <>
+                  <SignedOut>
+                    <SignInButton mode="modal">
+                      <button className="px-10 py-5 bg-orange-600 text-white font-bold rounded-2xl hover:bg-orange-700 transition-all hover:scale-105 shadow-2xl shadow-orange-600/30 flex items-center gap-3 group uppercase text-xs tracking-widest">
+                        Initialize Session <ChevronRight className="group-hover:translate-x-1 transition-transform" size={16} />
+                      </button>
+                    </SignInButton>
+                  </SignedOut>
+                  <SignedIn>
+                    <button onClick={() => router.push("/dashboard")} className="px-10 py-5 bg-stone-900 text-white font-bold rounded-2xl hover:bg-black transition-all hover:scale-105 shadow-2xl shadow-stone-900/20 uppercase text-xs tracking-widest">
+                      Enter Master Console
+                    </button>
+                  </SignedIn>
+                </>
+              ) : (
+                <button className="px-10 py-5 bg-stone-300 text-stone-600 font-bold rounded-2xl uppercase text-xs tracking-widest cursor-not-allowed">
+                  Auth Required
                 </button>
-              </SignedIn>
+              )}
             </div>
           </div>
         </div>
@@ -115,24 +130,26 @@ export default function LandingPage() {
       </section>
 
       {/* 4. ACTIVE MODULES (Page 3 - Only if SignedIn) */}
-      <SignedIn>
-        <section className="py-32 px-6 max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
-            <div className="space-y-2">
-              <h3 className="text-5xl font-black tracking-tighter italic uppercase text-stone-900">Console Modules</h3>
-              <p className="text-stone-400 font-bold uppercase text-[10px] tracking-[0.4em]">Establish connection with remote protocols</p>
+      {hasClerk && (
+        <SignedIn>
+          <section className="py-32 px-6 max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
+              <div className="space-y-2">
+                <h3 className="text-5xl font-black tracking-tighter italic uppercase text-stone-900">Console Modules</h3>
+                <p className="text-stone-400 font-bold uppercase text-[10px] tracking-[0.4em]">Establish connection with remote protocols</p>
+              </div>
+              <div className="h-[1px] flex-grow bg-stone-200 mx-8 hidden md:block" />
             </div>
-            <div className="h-[1px] flex-grow bg-stone-200 mx-8 hidden md:block" />
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <ModuleCard title="File Editor" desc="Remote filesystem access" onClick={() => router.push("/dashboard")} icon={<LayoutDashboard />} />
-            <ModuleCard title="System Health" desc="Live CPU & memory stats" onClick={() => router.push("/health")} icon={<Activity />} />
-            <ModuleCard title="Processes" desc="Inspect and kill tasks" onClick={() => router.push("/processes")} icon={<Terminal />} />
-            <ModuleCard title="Power Control" desc="Restart or shutdown" onClick={() => router.push("/power")} icon={<Zap />} />
-          </div>
-        </section>
-      </SignedIn>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <ModuleCard title="File Editor" desc="Remote filesystem access" onClick={() => router.push("/dashboard")} icon={<LayoutDashboard />} />
+              <ModuleCard title="System Health" desc="Live CPU & memory stats" onClick={() => router.push("/health")} icon={<Activity />} />
+              <ModuleCard title="Processes" desc="Inspect and kill tasks" onClick={() => router.push("/processes")} icon={<Terminal />} />
+              <ModuleCard title="Power Control" desc="Restart or shutdown" onClick={() => router.push("/power")} icon={<Zap />} />
+            </div>
+          </section>
+        </SignedIn>
+      )}
 
       {/* 5. ARCHITECTURE (Page 4) */}
       <section className="py-32 bg-stone-900 text-stone-100 px-6">
