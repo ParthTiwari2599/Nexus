@@ -10,9 +10,10 @@ import Editor from '@monaco-editor/react';
 
 export default function Dashboard() {
   const { user } = useUser();
+  type FileItem = { name: string; path: string; isDir: boolean };
   const [isConnected, setIsConnected] = useState(false);
   const [sysInfo, setSysInfo] = useState({ username: "...", platform: "...", homeDir: "..." });
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState<FileItem[]>([]);
   const [tabs, setTabs] = useState<{ path: string; name: string; content: string }[]>([]);
   const [activeTabPath, setActiveTabPath] = useState<string | null>(null);
   const [currentPath, setCurrentPath] = useState("");
