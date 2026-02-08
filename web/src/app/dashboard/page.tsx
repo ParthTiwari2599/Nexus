@@ -8,7 +8,9 @@ import { toast } from "sonner";
 import NexusTerminal from "@/components/Terminal";
 import Editor from '@monaco-editor/react';
 
-export default function Dashboard() {
+const HAS_CLERK = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+function DashboardWithClerk() {
   const { user } = useUser();
   type FileItem = { name: string; path: string; isDir: boolean };
   const [isConnected, setIsConnected] = useState(false);
@@ -379,4 +381,21 @@ export default function Dashboard() {
       </main>
     </div>
   );
+}
+
+export default function Dashboard() {
+  if (!HAS_CLERK) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-stone-100 text-stone-600">
+        <div className="max-w-md rounded-2xl border border-stone-200 bg-white p-6 text-center shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-stone-400">Configuration Required</p>
+          <p className="mt-3 text-sm font-bold text-stone-700">
+            Set <span className="font-mono">NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY</span> to enable the dashboard.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return <DashboardWithClerk />;
 }
