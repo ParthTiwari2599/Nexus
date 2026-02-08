@@ -14,11 +14,11 @@ const isOwnerRoute = createRouteMatcher([
   '/power(.*)'
 ]);
 
-export default clerkMiddleware((auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
   if (isProtectedRoute(req)) auth.protect();
   if (isOwnerRoute(req)) {
     const ownerId = process.env.OWNER_ID;
-    const userId = auth().userId;
+    const { userId } = await auth();
     if (ownerId && userId && userId !== ownerId) {
       return NextResponse.redirect(new URL("/", req.url));
     }
