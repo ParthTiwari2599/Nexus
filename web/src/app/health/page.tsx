@@ -14,7 +14,9 @@ import {
 } from "recharts";
 import Link from "next/link";
 
-export default function HealthPage() {
+const HAS_CLERK = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+function HealthPageWithClerk() {
   const { user } = useUser();
   const [stats, setStats] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
@@ -223,4 +225,21 @@ export default function HealthPage() {
       </div>
     </div>
   );
+}
+
+export default function HealthPage() {
+  if (!HAS_CLERK) {
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center bg-stone-50 text-stone-600">
+        <div className="max-w-md rounded-2xl border border-stone-200 bg-white p-6 text-center shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-stone-400">Configuration Required</p>
+          <p className="mt-3 text-sm font-bold text-stone-700">
+            Set <span className="font-mono">NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY</span> to enable this page.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return <HealthPageWithClerk />;
 }
