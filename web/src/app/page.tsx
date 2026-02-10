@@ -182,6 +182,14 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer className="py-20 text-center border-t border-stone-200">
         <p className="text-[10px] font-black text-stone-400 uppercase tracking-[0.8em]">Nexus Framework // 2026 // Authorized Access Only</p>
+        <a
+          href="https://github.com/ParthTiwari2599"
+          target="_blank"
+          rel="noreferrer"
+          className="mt-4 inline-block text-[10px] font-bold text-stone-400 uppercase tracking-widest hover:text-orange-600 transition-colors"
+        >
+          Made by Parth Tiwari
+        </a>
       </footer>
     </div>
   );
